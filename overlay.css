@@ -3,6 +3,11 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   max-width: 90vw;
   overflow-x: auto;
+  position: fixed !important;
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto;
 }
 #meet-avatar-overlay img {
   border: 2px solid #fff;

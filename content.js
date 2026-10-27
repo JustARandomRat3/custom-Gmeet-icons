@@ -1,5 +1,25 @@
 // Injects overlay and manages avatars on meeting pages
 
+// Extracts user names from Google Meet DOM
+function getMeetUsers() {
+  // Google Meet participant names are in elements with aria-label and role="listitem"
+  const items = document.querySelectorAll('[role="listitem"][aria-label]');
+  const names = Array.from(items).map(i => i.getAttribute('aria-label'));
+  // Fallback: try to get names from video tiles
+  if (names.length === 0) {
+    const tiles = document.querySelectorAll('div[aria-label][data-self-name]');
+    tiles.forEach(t => names.push(t.getAttribute('aria-label')));
+  }
+  return [...new Set(names)].filter(Boolean);
+}
+
+// Listen for popup requests
+browser.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === 'getMeetUsers') {
+    sendResponse({ users: getMeetUsers() });
+  }
+});
+
 function getUserState(user) {
   // Placeholder: Replace with real logic to detect user state (talking/muted/idle)
   return 'talking';
@@ -21,7 +41,7 @@ function createOverlay() {
   overlay.style.position = 'fixed';
   overlay.style.top = '10px';
   overlay.style.right = '10px';
-  overlay.style.zIndex = 999999;
+  overlay.style.zIndex = '2147483647';
   overlay.style.background = 'rgba(0,0,0,0.7)';
   overlay.style.padding = '10px';
   overlay.style.borderRadius = '8px';

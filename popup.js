@@ -67,16 +67,32 @@ async function loadUsers() {
   renderUserList();
 }
 
-// Simulate getting users from the current meet (to be replaced by content script messaging)
-function fakeUsers() {
-  return ['Alice', 'Bob', 'Charlie'];
+// Get real users from Google Meet via content script
+async function fetchMeetUsers() {
+  return new Promise(resolve => {
+    try {
+      browser.tabs.query({ active: true, currentWindow: true }, tabs => {
+        if (!tabs[0]) return resolve([]);
+        browser.tabs.sendMessage(tabs[0].id, { type: 'getMeetUsers' }, res => {
+          if (res && res.users) resolve(res.users);
+          else resolve([]);
+        });
+      });
+    } catch (e) { resolve([]); }
+  });
 }
 
 window.onload = async () => {
   await loadUsers();
-  // For demo, add fake users if none exist
-  if (Object.keys(users).length === 0) {
-    fakeUsers().forEach(u => users[u] = {});
+  // Try to get real users from Meet
+  const meetUsers = await fetchMeetUsers();
+  if (meetUsers.length) {
+    meetUsers.forEach(u => { if (!users[u]) users[u] = {}; });
+    await browser.storage.local.set({ users });
+    renderUserList();
+  } else if (Object.keys(users).length === 0) {
+    // fallback for non-Meet pages
+    ['Alice', 'Bob', 'Charlie'].forEach(u => users[u] = {});
     await browser.storage.local.set({ users });
     renderUserList();
   }
