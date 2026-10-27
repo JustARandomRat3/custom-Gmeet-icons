@@ -1,0 +1,10 @@
+/* Styles for the avatar overlay */
+#meet-avatar-overlay {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  max-width: 90vw;
+  overflow-x: auto;
+}
+#meet-avatar-overlay img {
+  border: 2px solid #fff;
+  background: #222;
+}
