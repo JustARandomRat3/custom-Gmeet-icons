@@ -10,7 +10,7 @@
 1. Download the extension package from [Releases](RELEASES_URL).
 2. In Firefox, open `about:addons`.
 3. Select the gear icon and choose **Install Add-on From File…**
-4. Select the downloaded `.xpi` file.
+4. Select the downloaded `.zip` file.
 
 ### Temporary installation for development
 
